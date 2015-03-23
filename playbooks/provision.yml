@@ -1,0 +1,11 @@
+---
+- name: Sitemap generator deploy playbook
+  hosts: local
+  sudo: yes
+
+  vars_files:
+    - vars/local.yml
+
+  roles:
+    - common
+
