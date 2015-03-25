@@ -11,28 +11,32 @@ class Generator
      */
     public function generate($url)
     {
-        $loader = new Loader();
-        $mainPageUrl = $this->getMainPageUrl($url);
+        try {
+            $loader = new Loader(
+                Loader::getMainPageUrl($url)
+            );
 
-        $links = $loader->load($mainPageUrl);
+            /**
+             * Consider host with www as the same
+             */
+            $loader->wwwIsTheSameDomain = true;
 
-        var_dump($links);
+            $storage = new ArrayStorage();
+            foreach($loader->load() as $url) {
+                $storage->add($url);
+            }
 
-    }
+            $total = $storage->total();
+            $storage->offset(5);
 
-    /**
-     * @param $url
-     * @return string
-     * @throws \ErrorException
-     */
-    private function getMainPageUrl($url)
-    {
-        $parsed = parse_url($url);
-        if($parsed) {
-            // TODO port!
-            return "{$parsed['scheme']}://{$parsed['host']}";
+            echo $total;
+            var_dump($storage->get());
+
+        } catch (\ErrorException $e) {
+            echo $e->getMessage();
+        } catch (\Exception $e) {
+            echo $e->getMessage();
         }
-
-        throw new \ErrorException("Can not parse {$url}");
     }
+
 }
