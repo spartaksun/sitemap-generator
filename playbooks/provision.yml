@@ -1,6 +1,6 @@
 ---
 - name: Sitemap generator deploy playbook
-  hosts: local
+  hosts: default
   sudo: yes
 
   vars_files:
@@ -8,4 +8,7 @@
 
   roles:
     - common
+    - php
+    - nginx
+
 

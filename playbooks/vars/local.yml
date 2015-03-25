@@ -1,0 +1,6 @@
+---
+project_root: /vagrant
+nginx_document_root: /vagrant/app/web
+nginx_server_name: localhost
+nginx_index_file: index.php
+mysql_root_password:

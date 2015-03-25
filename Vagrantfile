@@ -18,5 +18,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
      a.playbook = "playbooks/provision.yml"
      a.limit = "all"
   end
-
 end
