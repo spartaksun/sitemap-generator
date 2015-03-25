@@ -1,8 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: spartak
- * Date: 24.03.15
- * Time: 1:07
- */
+ini_set('display_errors', 1);
+require "../vendor/autoload.php";
+$generator = new \spartaksun\sitemap\generator\Generator();
+$generator->generate('http://google.com');
+
 echo "Test OK";

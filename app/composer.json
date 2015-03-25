@@ -1,0 +1,14 @@
+{
+  "name": "spartaksun/sitemap-generator",
+  "type": "project",
+  "license" : "GPL",
+  "stability": "dev",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "spartaksun\\sitemap\\": "src/spartaksun/sitemap/"
+    }
+  }
+}
