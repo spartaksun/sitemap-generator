@@ -215,12 +215,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/spartaksun/sitemap-php.git",
-                "reference": "67391d74819decc0a88d96c36d8572d15c3dac46"
+                "reference": "63893303d9e448229634bbd18dfb05001c2bfa27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spartaksun/sitemap-php/zipball/67391d74819decc0a88d96c36d8572d15c3dac46",
-                "reference": "67391d74819decc0a88d96c36d8572d15c3dac46",
+                "url": "https://api.github.com/repos/spartaksun/sitemap-php/zipball/63893303d9e448229634bbd18dfb05001c2bfa27",
+                "reference": "63893303d9e448229634bbd18dfb05001c2bfa27",
                 "shasum": ""
             },
             "require": {
@@ -237,7 +237,7 @@
             "license": [
                 "GPL"
             ],
-            "time": "2015-03-26 11:35:05"
+            "time": "2015-03-26 14:27:34"
         }
     ],
     "packages-dev": [],

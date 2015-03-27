@@ -10,5 +10,6 @@
     - common
     - php
     - nginx
+    - mysql
 
 

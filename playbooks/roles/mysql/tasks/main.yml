@@ -1,0 +1,8 @@
+---
+- name: Install mysql
+  apt: pkg={{ item }} state=latest force=yes update_cache=yes
+  with_items:
+    - mysql-server
+
+- name: Create mysql database
+  shell: mysql -uroot -e "create database sitemap";
