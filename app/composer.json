@@ -5,6 +5,11 @@
   "stability": "dev",
   "require": {
     "php": ">=5.4.0",
-    "spartaksun/sitemap-php": "dev-master"
+    "spartaksun/sitemap-php": "dev-master",
+    "yiisoft/yii2": "2.0.0",
+    "yiisoft/yii2-bootstrap": "2.0.0"
+  },
+  "autoload": {
+    "psr-0": {"app": "src/"}
   }
 }

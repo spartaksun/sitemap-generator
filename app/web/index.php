@@ -1,22 +1,29 @@
 <?php
-ini_set('display_errors', 1);
-require "../vendor/autoload.php";
 
-$generator = new \spartaksun\sitemap\generator\Generator('http://jewelport.net');
+defined('YII_DEBUG') or define('YII_DEBUG', true);
+defined('YII_ENV') or define('YII_ENV', 'dev');
 
-session_start();
+require(__DIR__ . '/../vendor/autoload.php');
+require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 
-$generator->loader          = new \spartaksun\sitemap\generator\loader\Loader();
-$generator->worker          = new \spartaksun\sitemap\generator\SiteWorker();
-$generator->worker->parser  = new \spartaksun\sitemap\generator\parser\HtmlParser();
-$generator->storage         = new \spartaksun\sitemap\generator\storage\MysqlStorage('ttttt');
-$generator->storage->db     = [
-                                    'name' => 'sitemap',
-                                    'host' => 'localhost',
-                                    'user' => 'root',
-                                    'pass' => '',
-                                ];
-$generator->level = 5;
+$config = require(__DIR__ . '/../src/config/web.php');
 
-$generator->generate();
+(new yii\web\Application($config))->run();
+
+//$generator = new \spartaksun\sitemap\generator\Generator('http://www.litmir.me/');
+//
+//
+//$generator->loader          = new \spartaksun\sitemap\generator\loader\Loader();
+//$generator->worker          = new \spartaksun\sitemap\generator\SiteWorker();
+//$generator->worker->parser  = new \spartaksun\sitemap\generator\parser\HtmlParser();
+//$generator->storage         = new \spartaksun\sitemap\generator\storage\MysqlStorage('ttttt');
+//$generator->storage->db     = [
+//                                    'name' => 'sitemap',
+//                                    'host' => 'localhost',
+//                                    'user' => 'root',
+//                                    'pass' => '',
+//                                ];
+//$generator->level = 5;
+//
+//$generator->generate();
 
