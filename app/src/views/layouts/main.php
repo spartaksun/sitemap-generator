@@ -15,39 +15,43 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?= Html::csrfMetaTags() ?>
+
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
 <body>
-    <?php $this->beginBody() ?>
-    <div class="wrap">
+<?php $this->beginBody() ?>
+<div class="wrap">
 
-        <div class="container">
+    <div class="container">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
 
-        <?php if(\Yii::$app->session->hasFlash('success')): ?>
-            <?= Yii::$app->session->getFlash('success') ?>
+        <?php if (\Yii::$app->session->hasFlash('success')): ?>
+            <div class="alert alert-info">
+                <?= Yii::$app->session->getFlash('success') ?>
+            </div>
         <?php endif; ?>
 
-        <?php if(\Yii::$app->session->hasFlash('error')): ?>
-            <?= Yii::$app->session->getFlash('error') ?>
+        <?php if (\Yii::$app->session->hasFlash('error')): ?>
+            <div class="alert alert-danger">
+                <?= Yii::$app->session->getFlash('error') ?>
+            </div>
         <?php endif; ?>
 
 
         <?= $content ?>
-        </div>
     </div>
+</div>
 
-    <footer class="footer">
-        <div class="container">
+<footer class="footer">
+    <div class="container">
         <p class="pull-left">&copy; Spartaksun <?= date('Y') ?></p>
-        </div>
-    </footer>
+    </div>
+</footer>
 
-    <?php $this->endBody() ?>
+<?php $this->endBody() ?>
 </body>
 </html>
 <?php $this->endPage() ?>

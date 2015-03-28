@@ -1,6 +1,1 @@
-<?php
-/**
- * Created by PhpStorm.
- * Date: 28.03.15
- * Time: 1:59
- */
+<h1><?= "Index page"?></h1>

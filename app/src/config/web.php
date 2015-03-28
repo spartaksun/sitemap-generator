@@ -11,6 +11,9 @@ $config = [
                 '/' => 'index/index',
             ],
          ],
+        'request' => [
+            'cookieValidationKey' => 'jsghwlek1erwe987',
+        ],
     ],
 ];
 
