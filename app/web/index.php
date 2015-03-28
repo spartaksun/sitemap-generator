@@ -1,5 +1,4 @@
 <?php
-ini_set('display_errors', 1);
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 
@@ -8,22 +7,20 @@ require(__DIR__ . '/../src/vendor/yiisoft/yii2/Yii.php');
 
 $config = require(__DIR__ . '/../src/config/web.php');
 
+\Yii::$container->set(
+    \spartaksun\sitemap\generator\loader\LoaderInterface::class,
+    \spartaksun\sitemap\generator\loader\GuzzleLoader::class
+);
+\Yii::$container->set(
+    \spartaksun\sitemap\generator\parser\ParserInterface::class,
+    \spartaksun\sitemap\generator\parser\HtmlParser::class
+);
+\Yii::$container->set(
+    \spartaksun\sitemap\generator\storage\UniqueValueStorageInterface::class,
+    [
+        'class' => \spartaksun\sitemap\generator\storage\MysqlStorage::class,
+        'db' => $config['params']['db'],
+    ]
+);
+
 (new yii\web\Application($config))->run();
-
-//$generator = new \spartaksun\sitemap\generator\Generator('http://www.litmir.me/');
-//
-//
-//$generator->loader          = new \spartaksun\sitemap\generator\loader\Loader();
-//$generator->worker          = new \spartaksun\sitemap\generator\SiteWorker();
-//$generator->worker->parser  = new \spartaksun\sitemap\generator\parser\HtmlParser();
-//$generator->storage         = new \spartaksun\sitemap\generator\storage\MysqlStorage('ttttt');
-//$generator->storage->db     = [
-//                                    'name' => 'sitemap',
-//                                    'host' => 'localhost',
-//                                    'user' => 'root',
-//                                    'pass' => '',
-//                                ];
-//$generator->level = 5;
-//
-//$generator->generate();
-

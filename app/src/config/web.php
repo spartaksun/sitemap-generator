@@ -15,6 +15,7 @@ $config = [
             'cookieValidationKey' => 'jsghwlek1erwe987',
         ],
     ],
+    'params' => require ("params.php")
 ];
 
 return $config;
