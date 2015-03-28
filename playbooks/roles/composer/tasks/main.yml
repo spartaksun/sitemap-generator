@@ -1,0 +1,7 @@
+---
+- name: Install composer
+  shell:
+    wget https://getcomposer.org/composer.phar && /bin/mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer
+
+- name: Set fxp/composer-asset-plugin
+  shell: /usr/local/bin/composer global require --no-interaction  "fxp/composer-asset-plugin:1.0.0-beta3"

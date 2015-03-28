@@ -12,10 +12,10 @@ $config = [
             ],
          ],
         'request' => [
-            'cookieValidationKey' => 'jsghwlek1erwe987',
+            'cookieValidationKey' => 'jsghwlek1erwe987iyiuyiu',
         ],
+        'db' => require("db.php")
     ],
-    'params' => require ("params.php")
 ];
 
 return $config;

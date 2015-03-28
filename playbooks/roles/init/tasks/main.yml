@@ -1,0 +1,6 @@
+---
+- name: Update Composer
+  shell: cd /vagrant/app/src/ && sudo composer up --no-interaction
+
+- name: Apply migrations
+  shell: sudo /vagrant/app/src/console/yii migrate --interactive=0

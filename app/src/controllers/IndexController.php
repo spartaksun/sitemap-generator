@@ -3,16 +3,17 @@
 namespace app\controllers;
 
 
+use app\models\Task;
 use spartaksun\sitemap\generator\Generator;
 use yii\web\Controller;
+use yii\web\Session;
 
 class IndexController extends Controller
 {
-
     /**
      * @var Generator
      */
-    protected $generator;
+    private $generator;
 
 
     /**
@@ -29,15 +30,46 @@ class IndexController extends Controller
 
     public function actionIndex()
     {
-        \Yii::$app->session->setFlash('success', 'All right =)');
+        $session = new Session();
+        $session->open();
 
-        $generator = $this->generator;
 
-        $generator->level = 1;
-        $generator->storage->setKey('uuuuu');
+        echo "===". \Yii::getAlias('@app');
+        $task = Task::findOne(['storage_key' => $session->id]);
 
-        $generator->generate('http://en.wikipedia.com');
+        $message = 'Нет заданий';
 
-        return $this->render('index');
+        if ($task) {
+            $message = 'Taска в процессе';
+        }
+
+        return $this->render('index', [
+            'message' => $message
+        ]);
     }
+
+    public function actionCreate()
+    {
+        $task = new Task();
+        $session = new Session();
+        $session->open();
+
+        if ($task->load(\Yii::$app->request->post())) {
+
+            $task->storage_key = $session->id;
+            if ($task->save()) {
+                \Yii::$app->session->setFlash('success', 'Task successfully created');
+
+                $cmd = \Yii::getAlias('@app') . "/console/yii sitemap/task " . $task->id;
+                shell_exec(sprintf('nohup %s > %s 2>&1 & echo $!', $cmd, '/var/log/app/' . $session->id));
+
+                return $this->redirect('/');
+            }
+        }
+
+        return $this->render('create', [
+            'task' => $task
+        ]);
+    }
+
 }

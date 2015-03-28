@@ -11,5 +11,7 @@
     - php
     - nginx
     - mysql
+    - composer
+    - init
 
 

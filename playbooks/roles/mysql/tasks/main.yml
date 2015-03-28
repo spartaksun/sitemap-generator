@@ -3,6 +3,7 @@
   apt: pkg={{ item }} state=latest force=yes update_cache=yes
   with_items:
     - mysql-server
+    - php5-mysql
 
 - name: Create mysql database
-  shell: mysql -uroot -e "create database sitemap";
+  shell: mysql -uroot -e "create database if not exists sitemap";
