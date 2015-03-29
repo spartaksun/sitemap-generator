@@ -28,6 +28,11 @@ class SitemapController extends Controller
         parent::__construct($id, $module, $config = []);
     }
 
+    /**
+     * Process one task
+     * @param $id
+     * @return bool|int
+     */
     public function actionTask($id)
     {
         $task = Task::findOne($id);
@@ -41,22 +46,32 @@ class SitemapController extends Controller
         $storage = $generator->storage;
         $storage->setKey($task->storage_key);
 
-        $storage->on(generator\storage\UniqueValueStorageInterface::EVENT_ADD_URLS,
-            function (generator\Event $event) use ($task) {
-                $params = $event->getParams();
+        $storage->on(generator\storage\UniqueValueStorageInterface::EVENT_ADD_URLS, function ($event) use ($task) {
+            /* @var generator\Event $event */
+            $params = $event->getParams();
 
-                if (empty($params['amount'])) {
-                    throw new ErrorException('Invalid or not found amount');
-                }
+            if (empty($params['amount'])) {
+                throw new ErrorException('Invalid or not found amount');
+            }
 
-                $task->amount += $params['amount'];
-                $task->status = Task::STATUS_IN_PROGRESS;
-                $task->save();
-            });
+            $task->amount += $params['amount'];
+            $task->status = Task::STATUS_IN_PROGRESS;
+            $task->save();
+        });
+
+        $generator->siteProcessor->on(generator\SiteProcessor::EVENT_PROCESSED_ALL, function () use ($task) {
+            $task->status = Task::STATUS_PARSED;
+            $task->save();
+        });
+
+        $generator->writer->on(generator\writer\WriterInterface::EVENT_FINISH, function () use ($task) {
+            $task->status = Task::STATUS_FINISHED;
+            $task->save();
+        });
 
         try{
 
-            $generator->generate($task->start_url, $task->nesting_level);
+            $generator->generate($task->start_url, $task->nesting_level, $task->realPath());
 
         } catch(generator\GeneratorException $e) {
             \Yii::error($e->getMessage());
@@ -66,6 +81,6 @@ class SitemapController extends Controller
             $storage->deInit();
         }
 
-        return $this->stdout("Index OK\n");
+        return $this->stdout("OK\n");
     }
 }

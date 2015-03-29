@@ -21,3 +21,7 @@
         'db' => require("db.php"),
     ]
 );
+\Yii::$container->set(
+    spartaksun\sitemap\generator\writer\WriterInterface::class,
+    spartaksun\sitemap\generator\writer\XmlWriter::class
+);

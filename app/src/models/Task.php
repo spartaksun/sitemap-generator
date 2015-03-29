@@ -15,6 +15,7 @@ use yii\db\ActiveRecord;
  * @property int $updated_at
  * @property int $amount
  * @property int $status
+ * @property int $id
  *
  * @package app\models
  */
@@ -23,7 +24,8 @@ class Task extends ActiveRecord
 
     const STATUS_NEW = 0;
     const STATUS_IN_PROGRESS = 1;
-    const STATUS_FINISHED = 2;
+    const STATUS_PARSED = 2;
+    const STATUS_FINISHED = 3;
 
     /**
      * @inheritdoc
@@ -53,10 +55,11 @@ class Task extends ActiveRecord
             [['storage_key'], 'unique'],
             [['storage_key'], 'string', 'max' => 32],
             [['start_url'], 'url'],
+            [['start_url'], 'trim'],
             [['start_url'], 'string', 'max' => 255],
             [['status', 'amount'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            ['nesting_level', 'integer', 'min' => 1, 'max' => 1000 ]
+            ['nesting_level', 'integer', 'min' => 1, 'max' => 10]
         ];
     }
 
@@ -71,6 +74,38 @@ class Task extends ActiveRecord
             'status' => \Yii::t('app', 'Status'),
             'amount' => \Yii::t('app', 'Pages'),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function statusAsString()
+    {
+        switch ($this->status) {
+            case self::STATUS_NEW:
+                return 'new';
+            case self::STATUS_IN_PROGRESS:
+                return 'in progress';
+            case self::STATUS_PARSED:
+                return 'parsing finished. writing sitemap';
+            case self::STATUS_FINISHED:
+                return 'finished';
+            default:
+                return 'undefined';
+        }
+    }
+
+    /**
+     * Path to sitemap archive
+     *
+     * @return string
+     */
+    public function realPath()
+    {
+        $parsed = parse_url($this->start_url);
+        $host = trim($parsed['host'], chr('/'));
+
+        return \Yii::getAlias('@app') . '/runtime/' . $host . "_" . $this->created_at . "_" . $this->id . ".zip";
     }
 
 }

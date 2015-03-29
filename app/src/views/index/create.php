@@ -1,12 +1,14 @@
 <?php
 /**
+ * @var $this yii\web\View
  * @var  \app\models\Task $task
  */
+$this->title = 'Generate sitemap';
+$this->params['breadcrumbs'][] = $this->title ;
+
 ?>
 <div class="panel-body">
-    <h1>
-        Generate map
-    </h1>
+    <h1><?= $this->title ?></h1>
 
     <?php $form = \yii\widgets\ActiveForm::begin(); ?>
 
@@ -14,7 +16,7 @@
     <?= $form->errorSummary($task); ?>
 
     <?= $form->field($task, 'start_url')->textInput(['maxlength' => 255]) ?>
-    <?= $form->field($task, 'nesting_level')->dropDownList([1=>1, 2=>2, 3=> 3, 4=>4, 5=> 5]) ?>
+    <?= $form->field($task, 'nesting_level')->dropDownList(array_combine(range(1, 10), range(1, 10))) ?>
 
     <?= \yii\helpers\Html::submitButton('Generate', ['class' => 'btn btn-success']) ?>
 

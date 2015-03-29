@@ -4,8 +4,9 @@ namespace app\controllers;
 
 
 use app\models\Task;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
-use yii\web\Session;
+use yii\web\NotFoundHttpException;
 use spartaksun\sitemap\generator\Generator;
 
 class IndexController extends Controller
@@ -34,10 +35,33 @@ class IndexController extends Controller
      */
     public function actionIndex()
     {
-        $task = $this->getTask();
+        $query = Task::find()->addOrderBy(['id' => SORT_DESC]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => false,
+        ]);
 
         return $this->render('index', [
-            'message' => !empty($task) ? \Yii::t('app', 'In progress ...') : '',
+            'dataProvider'  => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays one task
+     *
+     * @param $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionView($id)
+    {
+        $task = Task::findOne($id);
+        if(!$task) {
+            throw new NotFoundHttpException;
+        }
+
+        return $this->render('view', [
             'task'  => $task,
         ]);
     }
@@ -48,17 +72,11 @@ class IndexController extends Controller
      */
     public function actionCreate()
     {
-        if($this->getTask()) {
-            return $this->redirect('/');
-        }
-
         $task = new Task();
-        $session = new Session();
-        $session->open();
 
         if ($task->load(\Yii::$app->request->post())) {
 
-            $task->storage_key = $session->id;
+            $task->storage_key = md5(microtime(true) . rand(1, 99999));
             if ($task->save()) {
 
                 $logPath = \Yii::getAlias('@app') . '/runtime/'  . $task->id . '.log';
@@ -69,7 +87,7 @@ class IndexController extends Controller
                 );
                 \Yii::$app->session->setFlash('success', 'Task successfully created');
 
-                return $this->redirect('/');
+                return $this->redirect(['index/view', 'id' => $task->id]);
             }
         }
 
@@ -79,15 +97,28 @@ class IndexController extends Controller
     }
 
     /**
-     * @return Task|null
+     * Zip archive with sitemap
+     *
+     * @param $id
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ExitException
      */
-    public function getTask()
+    public function actionDownload($id)
     {
-        $session = new Session();
-        $session->open();
-        $task = Task::findOne(['storage_key' => $session->id]);
+        $task = Task::findOne($id);
+        if(!$task) {
+            throw new NotFoundHttpException;
+        }
 
-        return $task;
+        $filename = $task->realPath();
+        if (!is_file($filename)) {
+            throw new NotFoundHttpException;
+        }
+
+        $response = \Yii::$app->response;
+        $response->sendFile($filename);
+
+        \Yii::$app->end();
     }
 
 }
