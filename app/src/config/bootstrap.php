@@ -14,7 +14,7 @@
     \spartaksun\sitemap\generator\parser\HtmlParser::class
 );
 
-\Yii::$container->set(
+\Yii::$container->setSingleton(
     \spartaksun\sitemap\generator\storage\UniqueValueStorageInterface::class,
     [
         'class' => \spartaksun\sitemap\generator\storage\MysqlStorage::class,
