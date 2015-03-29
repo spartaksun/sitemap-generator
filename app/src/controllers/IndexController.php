@@ -4,9 +4,9 @@ namespace app\controllers;
 
 
 use app\models\Task;
-use spartaksun\sitemap\generator\Generator;
 use yii\web\Controller;
 use yii\web\Session;
+use spartaksun\sitemap\generator\Generator;
 
 class IndexController extends Controller
 {
@@ -28,28 +28,30 @@ class IndexController extends Controller
         parent::__construct($id, $module, $config = []);
     }
 
+    /**
+     * Index page
+     * @return string|\yii\web\Response
+     */
     public function actionIndex()
     {
-        $session = new Session();
-        $session->open();
-
-
-        echo "===". \Yii::getAlias('@app');
-        $task = Task::findOne(['storage_key' => $session->id]);
-
-        $message = 'Нет заданий';
-
-        if ($task) {
-            $message = 'Taска в процессе';
-        }
+        $task = $this->getTask();
 
         return $this->render('index', [
-            'message' => $message
+            'message' => !empty($task) ? \Yii::t('app', 'In progress ...') : '',
+            'task'  => $task,
         ]);
     }
 
+    /**
+     * Create new task
+     * @return string|\yii\web\Response
+     */
     public function actionCreate()
     {
+        if($this->getTask()) {
+            return $this->redirect('/');
+        }
+
         $task = new Task();
         $session = new Session();
         $session->open();
@@ -58,10 +60,14 @@ class IndexController extends Controller
 
             $task->storage_key = $session->id;
             if ($task->save()) {
-                \Yii::$app->session->setFlash('success', 'Task successfully created');
 
+                $logPath = \Yii::getAlias('@app') . '/runtime/'  . $task->id . '.log';
                 $cmd = \Yii::getAlias('@app') . "/console/yii sitemap/task " . $task->id;
-                shell_exec(sprintf('nohup %s > %s 2>&1 & echo $!', $cmd, '/var/log/app/' . $session->id));
+
+                shell_exec(
+                    sprintf('nohup %s > %s 2>&1 & echo $!', $cmd, $logPath)
+                );
+                \Yii::$app->session->setFlash('success', 'Task successfully created');
 
                 return $this->redirect('/');
             }
@@ -70,6 +76,18 @@ class IndexController extends Controller
         return $this->render('create', [
             'task' => $task
         ]);
+    }
+
+    /**
+     * @return Task|null
+     */
+    public function getTask()
+    {
+        $session = new Session();
+        $session->open();
+        $task = Task::findOne(['storage_key' => $session->id]);
+
+        return $task;
     }
 
 }

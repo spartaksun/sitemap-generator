@@ -4,13 +4,14 @@ namespace app\console\controllers;
 
 
 use app\models\Task;
-use spartaksun\sitemap\generator\Generator;
+use spartaksun\sitemap\generator as generator;
+use yii\base\ErrorException;
 use yii\console\Controller;
 
 class SitemapController extends Controller
 {
     /**
-     * @var Generator
+     * @var generator\Generator
      */
     private $generator;
 
@@ -18,10 +19,10 @@ class SitemapController extends Controller
     /**
      * @param string $id
      * @param \yii\base\Module $module
-     * @param Generator $generator
+     * @param generator\Generator $generator
      * @param array $config
      */
-    public function __construct($id, $module, Generator $generator, $config = [])
+    public function __construct($id, $module, generator\Generator $generator, $config = [])
     {
         $this->generator = $generator;
         parent::__construct($id, $module, $config = []);
@@ -36,15 +37,34 @@ class SitemapController extends Controller
         }
 
         $generator = $this->generator;
-        $generator->level = $task->nesting_level;
-        $generator->storage->setKey($task->storage_key);
-        $generator->storage->onAdd(function($amount) use ($task) {
-            $task->amount += $amount;
-            $task->status = Task::STATUS_IN_PROGRESS;
-            $task->save();
-        });
 
-        $generator->generate($task->start_url);
+        $storage = $generator->storage;
+        $storage->setKey($task->storage_key);
+
+        $storage->on(generator\storage\UniqueValueStorageInterface::EVENT_ADD_URLS,
+            function (generator\Event $event) use ($task) {
+                $params = $event->getParams();
+
+                if (empty($params['amount'])) {
+                    throw new ErrorException('Invalid or not found amount');
+                }
+
+                $task->amount += $params['amount'];
+                $task->status = Task::STATUS_IN_PROGRESS;
+                $task->save();
+            });
+
+        try{
+
+            $generator->generate($task->start_url, $task->nesting_level);
+
+        } catch(generator\GeneratorException $e) {
+            \Yii::error($e->getMessage());
+        } catch(\Exception $e) {
+            \Yii::error($e->getMessage());
+        } finally {
+            $storage->deInit();
+        }
 
         return $this->stdout("Index OK\n");
     }

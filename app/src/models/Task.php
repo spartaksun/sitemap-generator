@@ -60,4 +60,17 @@ class Task extends ActiveRecord
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'start_url' => 'URL',
+            'nesting_level' => \Yii::t('app', 'Level'),
+            'status' => \Yii::t('app', 'Status'),
+            'amount' => \Yii::t('app', 'Pages'),
+        ];
+    }
+
 }
